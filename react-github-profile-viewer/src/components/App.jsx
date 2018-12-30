@@ -57,7 +57,7 @@ let App = React.createClass({
     return(
       <div>
         <Favicon url="./img/favicon.ico" />
-        {/*<Search onFormSubmit= {this.handleFormSubmit.bind(this)} />*/}
+        <Search onFormSubmit= {this.handleFormSubmit.bind(this)} />
         <Profile {...this.state} />
       </div>
     );

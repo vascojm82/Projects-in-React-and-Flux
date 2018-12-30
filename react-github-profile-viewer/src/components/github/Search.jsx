@@ -1,11 +1,11 @@
 let React = require('react');
 
 let Search = React.createClass({
-  onSubmit: function(e){
+  onSubmit: function(e){    //This will be called when the user presses enter after typing on the input box below in render()
     e.preventDefault();
-    let username = this.refs.username.value.trim();
+    let username = this.refs.username.value.trim();   //reference to the <input> box below in render()
 
-    if(!username){
+    if(!username){    //If <input> in render() was empty
       alert("Please enter a username");
       return;
     }
