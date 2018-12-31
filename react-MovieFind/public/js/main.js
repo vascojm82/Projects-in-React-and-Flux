@@ -22627,7 +22627,7 @@ let App = require('./components/App.jsx');
 ReactDOM.render(React.createElement(App, null), document.getElementById('main'));
 },{"./components/App.jsx":189,"react":187,"react-dom":34}],200:[function(require,module,exports){
 let Fetch = require("whatwg-fetch");
-let baseUrl = 'http://api.themoviedb.org/3';
+let baseUrl = 'https://api.themoviedb.org/3';
 
 let service = {
   get: function(url){

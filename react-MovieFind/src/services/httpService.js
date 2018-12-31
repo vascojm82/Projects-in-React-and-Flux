@@ -1,5 +1,5 @@
 let Fetch = require("whatwg-fetch");
-let baseUrl = 'http://api.themoviedb.org/3';
+let baseUrl = 'https://api.themoviedb.org/3';
 
 let service = {
   get: function(url){
