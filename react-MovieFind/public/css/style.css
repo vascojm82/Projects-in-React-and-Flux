@@ -1,0 +1,64 @@
+body{
+  margin-top: 30px;
+  position: relative;
+  padding: 10px;
+  font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
+  background-image: url('../img/movies.png');
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+  background-size: cover;
+  background-color: rgba(255, 255, 255, 0.9);
+  background-blend-mode: lighten;
+}
+
+.search-form{
+  width: 100%;
+  margin: auto auto 30px auto;
+  background: #f4f4f4;
+  padding: 0 20px 20px 20px;
+  border: 1px #ccc solid;
+  border-radius: 10px;
+}
+
+.poster img{
+  width: 92%;
+  height: 35rem;
+  text-align: center;
+  margin: 20px 5% 20px;
+}
+
+.poster img:hover{
+  cursor: pointer;
+}
+
+.synopsis-row{
+  min-height: 70%;  /* Fallback for browsers do NOT support vh unit */
+  min-height: 70vh; /* These two lines are counted as one :-)       */
+  display: flex;
+  align-items: center;
+}
+
+.single-movie-title, .overview-header{
+  font-family: 'Metamorphous', cursive;
+}
+
+.overview-header{
+  font-size: 20px;
+  font-weight: bold;
+}
+
+.single-movie-img{
+  margin-bottom: 20px;
+}
+
+.single-movie-overview{
+  font-family: 'Swanky and Moo Moo', cursive;
+  font-size: 20px;
+  font-weight: normal;
+}
+
+@media screen and (max-width: 767px) {
+  .synopsis-row{
+    display: block;
+  }
+}
