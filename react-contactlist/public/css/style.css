@@ -1,0 +1,63 @@
+body{
+  margin-top: 30px;
+  position: relative;
+  padding: 10px;
+  font-family: Metamorphous;
+  background-image: url('../img/contacts.jpg');
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+  background-size: cover;
+  background-color: rgba(255, 255, 255, 0.9);
+  background-blend-mode: luminosity;
+}
+
+.title{
+  background-color: #f5f5f5;
+  border: 1px solid #e3e3e3;
+  padding: 15px 40px 0 40px;
+  width: fit-content;
+  margin: auto;
+  border-radius: 10px;
+  margin-bottom: 40px;
+}
+
+.title h1{
+  font-weight: bold;
+  color: #70787D;
+}
+
+h3{
+  color: #70787D;
+}
+
+.panel{
+  background-color: #f5f5f5;
+  border: 1px solid #e3e3e3;
+}
+
+.panel-body{
+  position: relative;
+}
+
+.table{
+  width: 100%;
+  margin: auto;
+  color: #70787D;
+}
+
+.td-min-name{
+  min-width: 150px;
+}
+
+.td-min-email{
+  min-width: 200px;
+}
+
+.btn-danger {
+  background-color: #70787D;
+  border-color: #70787D;
+}
+
+.btn-default, .btn-default:hover{
+  color: #70787D;
+}
