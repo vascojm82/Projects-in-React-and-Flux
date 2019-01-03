@@ -1,6 +1,6 @@
 let Actions = require("../flux/actions/Actions.jsx");
 let HTTP = require('../services/httpService.js');
-let mLab_Api_Key = "9orFVQ_fjoG6wuYAOzfJWSbfyrOrK05c";
+let mLab_Api_Key = "<ENTER HERE>";
 
 module.exports = {
   addNote: function(note){
