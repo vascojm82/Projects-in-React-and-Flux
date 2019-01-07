@@ -70402,6 +70402,8 @@ let AddForm = React.createClass({displayName: "AddForm",
       description: this.refs.description.value.trim()
     }
 
+    this.refs.title = this.refs.video_id = this.refs.description = '';
+
     Actions.saveVideo(video);
   },
   render: function(){
@@ -70431,12 +70433,14 @@ let AddForm = React.createClass({displayName: "AddForm",
 });
 
 module.exports = AddForm;
-},{"../flux/actions/Actions.jsx":206,"react":200}],205:[function(require,module,exports){
+},{"../flux/actions/Actions.jsx":208,"react":200}],205:[function(require,module,exports){
 let React = require('react');
 let Favicon = require('react-favicon');
 let Actions = require('../flux/actions/Actions.jsx');
 let AppStore = require('../flux/stores/AppStore.jsx');
 let AddForm = require('./AddForm.jsx');
+let VideoList = require('./VideoList.jsx');
+let AppAPI = require('../utils/appApi.js');
 
 let App = React.createClass({displayName: "App",
   getInitialState: function(){
@@ -70444,6 +70448,7 @@ let App = React.createClass({displayName: "App",
   },
   componentDidMount: function(){
     AppStore.addChangeListener(this.onChange);
+    AppAPI.getVideos();
   },
   componentWillUnmount: function(){
     AppStore.removeChangeListener(this.onChange);
@@ -70458,14 +70463,55 @@ let App = React.createClass({displayName: "App",
     return(
       React.createElement("div", null, 
         React.createElement(Favicon, {url: "./img/favicon.ico"}), 
-        React.createElement(AddForm, null)
+        React.createElement(AddForm, null), 
+        React.createElement(VideoList, {videos: this.state.videos})
       )
     );
   }
 });
 
 module.exports = App;
-},{"../flux/actions/Actions.jsx":206,"../flux/stores/AppStore.jsx":209,"./AddForm.jsx":204,"react":200,"react-favicon":174}],206:[function(require,module,exports){
+},{"../flux/actions/Actions.jsx":208,"../flux/stores/AppStore.jsx":211,"../utils/appApi.js":214,"./AddForm.jsx":204,"./VideoList.jsx":207,"react":200,"react-favicon":174}],206:[function(require,module,exports){
+let React = require('react');
+let Actions = require('../flux/actions/Actions.jsx');
+
+let Video = React.createClass({displayName: "Video",
+  onDelete: function(i,j){
+    console.log("VideoId --- Video ---: ",i);
+    Actions.removeVideo(i);
+  },
+  render: function(){
+    let link= `https://www.youtube.com/embed/${this.props.video.id}`;
+    return(
+      React.createElement("div", {className: "c4"}, 
+        React.createElement("h5", null, this.props.video.title, " ", React.createElement("span", {className: "delete"}, React.createElement("a", {onClick: this.onDelete.bind(this, this.props.video.id), href: "#"}, "X"))), 
+        React.createElement("iframe", {width: "360", height: "285", src: link, frameborder: "0", allow: "accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture", allowfullscreen: true}), 
+        React.createElement("p", null, this.props.video.description)
+      )
+    );
+  }
+});
+
+module.exports = Video;
+},{"../flux/actions/Actions.jsx":208,"react":200}],207:[function(require,module,exports){
+let React = require('react');
+let Video = require('./Video.jsx');
+
+let VideoList = React.createClass({displayName: "VideoList",
+  render: function(){
+    console.log("this.props.videos: ",this.props.videos);
+    return(
+      React.createElement("div", {className: "row"}, 
+        this.props.videos.map((video, index) => {
+          return(React.createElement(Video, {video: video, key: index}));
+        })
+      )
+    );
+  }
+});
+
+module.exports = VideoList;
+},{"./Video.jsx":206,"react":200}],208:[function(require,module,exports){
 let Dispatcher = require("../dispatcher/Dispatcher.jsx");
 let Constants = require("../constants/Constants.jsx");
 
@@ -70475,15 +70521,30 @@ let Actions = {
       actionType: Constants.SAVE_VIDEO,
       video: video
     });
+  },
+  receiveVideos: function(videos){
+    console.log("ReceiveVideos Ran");
+    Dispatcher.handleViewAction({
+      actionType: Constants.RECEIVE_VIDEOS,
+      videos: videos
+    });
+  },
+  removeVideo: function(videoId){
+    Dispatcher.handleViewAction({
+      actionType: Constants.DELETE_VIDEO,
+      videoId: videoId
+    });
   }
 }
 
 module.exports = Actions;
-},{"../constants/Constants.jsx":207,"../dispatcher/Dispatcher.jsx":208}],207:[function(require,module,exports){
+},{"../constants/Constants.jsx":209,"../dispatcher/Dispatcher.jsx":210}],209:[function(require,module,exports){
 module.exports = {
-  SAVE_VIDEO: 'SAVE_VIDEO'
+  SAVE_VIDEO: 'SAVE_VIDEO',
+  RECEIVE_VIDEOS: 'RECEIVE_VIDEOS',
+  DELETE_VIDEO: 'DELETE_VIDEO'
 }
-},{}],208:[function(require,module,exports){
+},{}],210:[function(require,module,exports){
 let FluxDispatcher = require("flux").Dispatcher;
 let assign = require("object-assign");
 
@@ -70497,7 +70558,7 @@ let Dispatcher = assign(new FluxDispatcher(), {
 });
 
 module.exports = Dispatcher;
-},{"flux":39,"object-assign":41}],209:[function(require,module,exports){
+},{"flux":39,"object-assign":41}],211:[function(require,module,exports){
 let Dispatcher = require("../dispatcher/Dispatcher.jsx");
 let Constants = require("../constants/Constants.jsx");
 let EventEmitter = require("events").EventEmitter;
@@ -70516,6 +70577,16 @@ Dispatcher.register(function(payload){
       AppAPI.saveVideo(action.video);
       AppStore.emit(CHANGE_EVENT);
       break;
+    case Constants.RECEIVE_VIDEOS:
+      console.log("Receiving Videos...");
+      AppStore.setVideos(action.videos);
+      AppStore.emit(CHANGE_EVENT);
+      break;
+    case Constants.DELETE_VIDEO:
+      AppStore.removeVideo(action.videoId);
+      AppAPI.removeVideo(action.videoId);
+      AppStore.emit(CHANGE_EVENT);
+      break;
   }
 
   return true;
@@ -70526,10 +70597,17 @@ let AppStore = assign({}, EventEmitter.prototype, {
     _videos.push(video);
   },
   getVideos: function(){
+    console.log('Store getVideos: ',_videos);
     return _videos;
   },
   setVideos: function(videos){
+    console.log('Store setVideos: ',videos);
     _videos = videos;
+  },
+  removeVideo: function(videoId){
+    let index = _videos.findIndex((x) => x.id === videoId);
+
+    _videos.splice(index, 1);
   },
   emitChange: function(){
     this.emit(CHANGE_EVENT);
@@ -70543,14 +70621,14 @@ let AppStore = assign({}, EventEmitter.prototype, {
 });
 
 module.exports = AppStore;
-},{"../../utils/appApi.js":212,"../actions/Actions.jsx":206,"../constants/Constants.jsx":207,"../dispatcher/Dispatcher.jsx":208,"events":14,"object-assign":41}],210:[function(require,module,exports){
+},{"../../utils/appApi.js":214,"../actions/Actions.jsx":208,"../constants/Constants.jsx":209,"../dispatcher/Dispatcher.jsx":210,"events":14,"object-assign":41}],212:[function(require,module,exports){
 let React = require('react');
 let ReactDOM = require('react-dom');
 let App = require('./components/App.jsx');
 let HTTP = require('./services/httpService.js');
 
 ReactDOM.render(React.createElement(App, null), document.getElementById('main'));
-},{"./components/App.jsx":205,"./services/httpService.js":211,"react":200,"react-dom":47}],211:[function(require,module,exports){
+},{"./components/App.jsx":205,"./services/httpService.js":213,"react":200,"react-dom":47}],213:[function(require,module,exports){
 let Fetch = require("whatwg-fetch");
 let baseUrl = "https://pokeapi.co/api/v2";
 
@@ -70577,7 +70655,7 @@ let service = {
 }
 
 module.exports = service;
-},{"whatwg-fetch":203}],212:[function(require,module,exports){
+},{"whatwg-fetch":203}],214:[function(require,module,exports){
 let Firebase = require('firebase');
 let Actions = require("../flux/actions/Actions.jsx");
 
@@ -70600,23 +70678,26 @@ module.exports = {
       video: video
     });
   }
-  // ,
-  // getVideos: function(){
-  //   firebaseRef.once("value", function(snapshot){
-  //     let videos = [];
-  //
-  //     snapshot.forEach(function(childSnapshot){
-  //       let video = {
-  //         id: childSnapshot.key,
-  //         name: childSnapshot.val().contact.name,
-  //         phone: childSnapshot.val().contact.phone,
-  //         email: childSnapshot.val().contact.email
-  //       }
-  //
-  //       videos.push(video);
-  //     });
-  //     Actions.receiveContacts(videos);
-  //   });
-  // }
+  ,
+  getVideos: function(){
+    firebaseRef.once("value", function(snapshot){
+      let videos = [];
+
+      snapshot.forEach(function(childSnapshot){
+        let video = {
+          id: childSnapshot.key,
+					title: childSnapshot.child("video").val().title,
+					video_id: childSnapshot.child("video").val().video_id,
+					description: childSnapshot.child("video").val().description
+        }
+        console.log(`video: ${JSON.stringify(video)}`);
+        videos.push(video);
+      });
+      Actions.receiveVideos(videos);
+    });
+  },
+  removeVideo: function(videoId){
+    firebaseRef.child(videoId).remove();
+  }
 }
-},{"../flux/actions/Actions.jsx":206,"firebase":38}]},{},[210]);
+},{"../flux/actions/Actions.jsx":208,"firebase":38}]},{},[212]);

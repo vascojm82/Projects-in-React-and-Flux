@@ -10,6 +10,8 @@ let AddForm = React.createClass({
       description: this.refs.description.value.trim()
     }
 
+    this.refs.title = this.refs.video_id = this.refs.description = '';
+
     Actions.saveVideo(video);
   },
   render: function(){

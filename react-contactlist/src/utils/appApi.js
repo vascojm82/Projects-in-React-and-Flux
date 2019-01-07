@@ -2,7 +2,7 @@ let Firebase = require('firebase');
 let Actions = require("../flux/actions/Actions.jsx");
 
 let config = {
-  apiKey: "AIzaSyD4iTiFs3GAfxXxwTDSRF2tUb4c7JSCcvs",
+  apiKey: "<ENTER HERE>",
   authDomain: "classwork-3e64b.firebaseapp.com",
   databaseURL: "https://classwork-3e64b.firebaseio.com",
   projectId: "classwork-3e64b",
@@ -12,7 +12,7 @@ let config = {
 
 Firebase.initializeApp(config);
 
-let firebaseRef = Firebase.database().ref(contacts);
+let firebaseRef = Firebase.database().ref('contacts');
 
 module.exports = {
   saveContact: function(contact){

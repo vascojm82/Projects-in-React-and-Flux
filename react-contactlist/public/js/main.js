@@ -70283,7 +70283,7 @@ let config = {
 
 Firebase.initializeApp(config);
 
-let firebaseRef = Firebase.database().ref();
+let firebaseRef = Firebase.database().ref('contacts');
 
 module.exports = {
   saveContact: function(contact){

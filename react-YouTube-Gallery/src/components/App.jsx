@@ -3,6 +3,8 @@ let Favicon = require('react-favicon');
 let Actions = require('../flux/actions/Actions.jsx');
 let AppStore = require('../flux/stores/AppStore.jsx');
 let AddForm = require('./AddForm.jsx');
+let VideoList = require('./VideoList.jsx');
+let AppAPI = require('../utils/appApi.js');
 
 let App = React.createClass({
   getInitialState: function(){
@@ -10,6 +12,7 @@ let App = React.createClass({
   },
   componentDidMount: function(){
     AppStore.addChangeListener(this.onChange);
+    AppAPI.getVideos();
   },
   componentWillUnmount: function(){
     AppStore.removeChangeListener(this.onChange);
@@ -25,6 +28,7 @@ let App = React.createClass({
       <div>
         <Favicon url="./img/favicon.ico" />
         <AddForm />
+        <VideoList videos={this.state.videos} />
       </div>
     );
   }

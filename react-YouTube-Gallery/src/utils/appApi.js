@@ -2,7 +2,7 @@ let Firebase = require('firebase');
 let Actions = require("../flux/actions/Actions.jsx");
 
 let config = {
-  apiKey: "AIzaSyD4iTiFs3GAfxXxwTDSRF2tUb4c7JSCcvs",
+  apiKey: "<ENTER HERE>",
   authDomain: "classwork-3e64b.firebaseapp.com",
   databaseURL: "https://classwork-3e64b.firebaseio.com",
   projectId: "classwork-3e64b",
@@ -20,22 +20,25 @@ module.exports = {
       video: video
     });
   }
-  // ,
-  // getVideos: function(){
-  //   firebaseRef.once("value", function(snapshot){
-  //     let videos = [];
-  //
-  //     snapshot.forEach(function(childSnapshot){
-  //       let video = {
-  //         id: childSnapshot.key,
-  //         name: childSnapshot.val().contact.name,
-  //         phone: childSnapshot.val().contact.phone,
-  //         email: childSnapshot.val().contact.email
-  //       }
-  //
-  //       videos.push(video);
-  //     });
-  //     Actions.receiveContacts(videos);
-  //   });
-  // }
+  ,
+  getVideos: function(){
+    firebaseRef.once("value", function(snapshot){
+      let videos = [];
+
+      snapshot.forEach(function(childSnapshot){
+        let video = {
+          id: childSnapshot.key,
+					title: childSnapshot.child("video").val().title,
+					video_id: childSnapshot.child("video").val().video_id,
+					description: childSnapshot.child("video").val().description
+        }
+        console.log(`video: ${JSON.stringify(video)}`);
+        videos.push(video);
+      });
+      Actions.receiveVideos(videos);
+    });
+  },
+  removeVideo: function(videoId){
+    firebaseRef.child(videoId).remove();
+  }
 }
